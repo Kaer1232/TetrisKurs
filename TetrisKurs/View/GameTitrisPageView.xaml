@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TetrisKurs.View.GameTitrisPageView"
+             Title="{Binding Title}">
+    <VerticalStackLayout>
+        <Grid>
+            <Grid.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+            </Grid.GestureRecognizers>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- フィールド -->
+            <Grid x:Name="field" />
+
+            <Grid x:Name="nextField" BindingContext="{Binding NextField}"/>
+
+            <Grid Grid.Row="2" BindingContext="{Binding Result}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="0" FontSize="28" Text="Total" />
+                <Label Grid.Row="0" Grid.Column="1" FontSize="28" Text=" : " />
+                <Label Grid.Row="0" Grid.Column="2" FontSize="28" Text="{Binding TotalRowCount.Value}" />
+            </Grid>
+        </Grid>
+
+        <Grid Grid.ColumnSpan="2" Background="#99000000" IsVisible="False">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Row="1" Text="Game is over!" FontSize="48"/>
+            <Label Grid.Row="2" Text="Please press Esc key" FontSize="24" />
+        </Grid>
+    </VerticalStackLayout>
+</ContentPage>
