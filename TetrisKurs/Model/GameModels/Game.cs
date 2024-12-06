@@ -15,7 +15,6 @@ namespace TetrisKurs.Base
         public IReadOnlyReactiveProperty<bool> IsPlaying => this.Field.IsActivated.ToReadOnlyReactiveProperty();
 
         public IReadOnlyReactiveProperty<bool> IsOver => this.Field.IsUpperLimitOvered.ToReadOnlyReactiveProperty();
-
         public IReadOnlyReactiveProperty<TetriminoKind> NextTetrimino => this.nextTetrimino;
         private readonly ReactiveProperty<TetriminoKind> nextTetrimino = new ReactiveProperty<TetriminoKind>();
         private int PreviousCount { get; set; }

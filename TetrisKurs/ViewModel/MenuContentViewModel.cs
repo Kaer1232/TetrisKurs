@@ -9,13 +9,22 @@ namespace TetrisKurs.ViewModel
         {
             _viewModel = viewModel;
             StartBtnCommannd = new Command(StartButtom);
+            RecordsBtnCommannd = new Command(RecordsButtom);
+
         }
 
         public void StartButtom()
         {
-            _viewModel.Navigation();
+            _viewModel.Start();
+        }
+
+        public void RecordsButtom()
+        {
+            _viewModel.Records();
         }
 
         public Command StartBtnCommannd { get; }
+        public Command RecordsBtnCommannd { get; }
+
     }
 }

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Reactive.Bindings;
 using System.Reactive.Linq;
-using System.Timers;
-using TetrisKurs.Model.GameModels;
-using Reactive.Bindings;
 using TetrisKurs.Base;
 using This = TetrisKurs.Model.GameModels.Field;
-
 
 namespace TetrisKurs.Model.GameModels
 {
@@ -29,16 +23,12 @@ namespace TetrisKurs.Model.GameModels
         public IReadOnlyReactiveProperty<bool> IsUpperLimitOvered => this.isUpperLimitOvered;
         private readonly ReactiveProperty<bool> isUpperLimitOvered = new ReactiveProperty<bool>(mode: ReactivePropertyMode.DistinctUntilChanged);
 
+
         public IReadOnlyReactiveProperty<int> LastRemovedRowCount => this.lastRemovedRowCount;
         private readonly ReactiveProperty<int> lastRemovedRowCount = new ReactiveProperty<int>(mode: ReactivePropertyMode.None);
 
         private System.Timers.Timer Timer { get; } = new System.Timers.Timer();
 
-
-        #region コンストラクタ
-        /// <summary>
-        /// インスタンスを生成します。
-        /// </summary>
         public Field()
         {
             this.Timer.ElapsedAsObservable()
@@ -55,6 +45,8 @@ namespace TetrisKurs.Model.GameModels
             this.placedBlocks.Value = Array.Empty<Block>();
             this.Timer.Interval = 1000;
             this.Timer.Start();
+            this.isActivated.Value = !this.isUpperLimitOvered.Value;
+            if (!this.isActivated.Value) this.Timer.Stop();
         }
 
 
@@ -64,9 +56,15 @@ namespace TetrisKurs.Model.GameModels
                 return;
 
             if (direction == MoveDirection.Down)
-            {
+            {   System.Diagnostics.Debug.WriteLine($"Block Row: {Tetrimino.Value.Position.Row}, Column: {Tetrimino.Value.Position.Column}");
+                Block block;
                 this.Timer.Stop();
-                if (this.Tetrimino.Value.Move(direction, this.CheckCollision)) this.Tetrimino.ForceNotify();
+                if (this.Tetrimino.Value.Move(direction, this.CheckCollision))
+                    { this.Tetrimino.ForceNotify();
+
+                    if (this.Tetrimino.Value.Blocks.Any(block => block.Position.Row < -3) && this.Tetrimino.Value.Blocks.Any(block => block.Position.Row < -2))
+                        this.GameOver();
+                }
                 else this.FixTetrimino();
                 this.Timer.Start();
                 return;
@@ -74,6 +72,14 @@ namespace TetrisKurs.Model.GameModels
 
             if (this.Tetrimino.Value.Move(direction, this.CheckCollision))
                 this.Tetrimino.ForceNotify();
+            
+        }
+        private void GameOver()
+        {
+            this.isActivated.Value = false;
+            this.isUpperLimitOvered.Value = true;
+            this.Timer.Stop();
+            System.Diagnostics.Debug.WriteLine("Game Over!");
         }
 
 
@@ -100,18 +106,13 @@ namespace TetrisKurs.Model.GameModels
         private void FixTetrimino()
         {
             var result = this.RemoveAndFixBlock();
-
             var removedRowCount = result.Item1;
             if (removedRowCount > 0)
-                this.lastRemovedRowCount.Value = removedRowCount;
-
-            if (result.Item2.Any(x => x.Position.Row < 0))
+                this.lastRemovedRowCount.Value = removedRowCount; if (result.Item2.Any(x => x.Position.Row < 0))
             {
-                this.isActivated.Value = false;
-                this.isUpperLimitOvered.Value = true;
+                GameOver();
                 return;
             }
-
             this.Tetrimino.Value = null;
             this.placedBlocks.Value = result.Item2;
         }
@@ -121,68 +122,44 @@ namespace TetrisKurs.Model.GameModels
             var interval = this.Timer.Interval / 2;
             this.Timer.Interval = Math.Max(interval, min);
         }
-        #endregion
-
-
-        #region 判定 / その他
-        /// <summary>
-        /// 衝突判定を行います。
-        /// </summary>
-        /// <param name="block">チェック対象のブロック</param>
-        /// <returns>衝突している場合true</returns>
         private bool CheckCollision(Block block)
         {
             if (block == null)
                 throw new ArgumentNullException(nameof(block));
 
-            //--- 左側の壁にめり込んでいる
             if (block.Position.Column < 0)
                 return true;
 
-            //--- 右側の壁にめり込んでいる
             if (This.ColumnCount <= block.Position.Column)
                 return true;
 
-            //--- 床にめり込んでいる
             if (This.RowCount <= block.Position.Row)
                 return true;
 
-            //--- すでに配置済みブロックがある
             return this.placedBlocks.Value.Any(x => x.Position == block.Position);
         }
-
-
-        /// <summary>
-        /// ブロックが揃っていたら消し、配置済みブロックを確定します。
-        /// </summary>
-        /// <returns>確定された配置済みブロック</returns>
         private Tuple<int, Block[]> RemoveAndFixBlock()
         {
-            //--- 行ごとにブロックをまとめる
             var rows = this.placedBlocks.Value
-                        .Concat(this.Tetrimino.Value.Blocks)  //--- 配置済みのブロックとテトリミノを合成
-                        .GroupBy(x => x.Position.Row)  //--- 行ごとにまとめる
+                        .Concat(this.Tetrimino.Value.Blocks)
+                        .GroupBy(x => x.Position.Row)
                         .Select(x => new
                         {
                             Row = x.Key,
-                            IsFilled = This.ColumnCount <= x.Count(),  //--- 揃っているか
+                            IsFilled = This.ColumnCount <= x.Count(),
                             Blocks = x,
                         })
                         .ToArray();
 
-            //--- 揃ったブロックを削除して確定
             var blocks = rows
-                        .OrderByDescending(x => x.Row)    //--- 深い方から並び替え
-                        .WithIndex(x => x.IsFilled)       //--- 揃っている行が見つかるたびにインクリメント
-                        .Where(x => !x.Element.IsFilled)  //--- 揃っている行は消す
+                        .OrderByDescending(x => x.Row)
+                        .WithIndex(x => x.IsFilled)
+                        .Where(x => !x.Element.IsFilled)
                         .SelectMany(x =>
                         {
-                            //--- ズラす必要がない行はそのまま処理
-                            //--- 処理パフォーマンス向上のため特別処理
                             if (x.Index == 0)
                                 return x.Element.Blocks;
 
-                            //--- 消えた行のぶん下に段をズラす
                             return x.Element.Blocks.Select(y =>
                             {
                                 var position = new Position(y.Position.Row + x.Index, y.Position.Column);
@@ -195,6 +172,5 @@ namespace TetrisKurs.Model.GameModels
             var removedRowCount = rows.Count(x => x.IsFilled);
             return Tuple.Create(removedRowCount, blocks);
         }
-        #endregion
     }
 }

@@ -46,7 +46,8 @@ namespace TetrisKurs.Model.GameModels
             }
             else
             {
-                var delta = (direction == MoveDirection.Right) ? 1 : -1;
+                var delta = (direction
+                    == MoveDirection.Right) ? 1 : -1;
                 var column = position.Column + delta;
                 position = new Position(position.Row, column);
             }

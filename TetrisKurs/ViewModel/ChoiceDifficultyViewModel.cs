@@ -5,12 +5,15 @@ namespace TetrisKurs.ViewModel
 {
     public partial class ChoiceDifficultyViewModel: ViewModelBase
     {
+        private readonly MainPageViewModel _viewModel;
 
-        public ChoiceDifficultyViewModel()
+        public ChoiceDifficultyViewModel(MainPageViewModel viewModel)
         {
+            _viewModel = viewModel;
             EasyBtmCommand = new Command(EasyGame);
             MiddleBtmCommand = new Command(MiddleGame);
             HardBtmCommand = new Command(HardGame);
+            BackBtmCommand = new Command(BackMenu);
         }
 
         private void EasyGame()
@@ -20,16 +23,7 @@ namespace TetrisKurs.ViewModel
 
         private async void MiddleGame()
         {
-            try
-            { 
-                await Shell.Current.GoToAsync(nameof(GameTitrisPageView));
-            }
-            catch (Exception ex)
-            {
-                // Логирование или отладка
-                Console.WriteLine($"Ошибка навигации: {ex.Message}");
-            }
-           
+            await Shell.Current.GoToAsync(nameof(GameTitrisPageView));
         }
 
         private void HardGame()
@@ -37,9 +31,15 @@ namespace TetrisKurs.ViewModel
 
         }
 
+        private void BackMenu()
+        {
+            _viewModel.Back();
+        }
+
         private Command EasyBtmCommand;
-        private Command MiddleBtmCommand;
+        public Command MiddleBtmCommand { get; }
         private Command HardBtmCommand;
+        public Command BackBtmCommand { get; }
 
     }
 }

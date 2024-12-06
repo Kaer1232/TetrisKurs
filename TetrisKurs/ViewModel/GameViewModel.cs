@@ -14,7 +14,7 @@ namespace TetrisKurs.ViewModels
 
         public NextFieldViewModel NextField { get; }
         public IReadOnlyReactiveProperty<bool> IsPlaying => Game.IsPlaying;
-        public IReadOnlyReactiveProperty<bool> IsOver => Game.IsOver;
+        public IReadOnlyReactiveProperty<bool> IsOver => this.Game.IsOver;
         public Command PanUpdatedCommand { get; }
 
         public GameViewModel()
@@ -23,9 +23,10 @@ namespace TetrisKurs.ViewModels
             Field = new FieldViewModel(Game.Field);
             NextField = new NextFieldViewModel(Game.NextTetrimino);
             PanUpdatedCommand = new Command<PanUpdatedEventArgs>(OnPanUpdated);
-
         }
+
         public void Play() => Game.Play();
+
         private void OnPanUpdated(PanUpdatedEventArgs e)
         {
             GameTitrisPageView gameTitrisPageView = new GameTitrisPageView();
@@ -45,6 +46,8 @@ namespace TetrisKurs.ViewModels
                     if (e.TotalY > 0)
                     {
                         gameTitrisPageView.AttachEvent(3);
+                        
+
                     }
                     break;
             }

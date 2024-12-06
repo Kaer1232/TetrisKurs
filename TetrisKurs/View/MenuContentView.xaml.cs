@@ -4,8 +4,9 @@ namespace TetrisKurs.View;
 
 public partial class MenuContentView : ContentView
 {
-	public MenuContentView()
+	public MenuContentView(MainPageViewModel mainPageViewModel)
 	{
 		InitializeComponent();
+		BindingContext = new MenuContentViewModel(mainPageViewModel);
 	}
 }

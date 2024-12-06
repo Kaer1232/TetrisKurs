@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TetrisKurs.Model
+namespace TetrisKurs.ViewModel
 {
-    public class RecordsModel
+    public class Score
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        public int Score { get; set; }
+        public int ScoreValue { get; set; }
     }
 }

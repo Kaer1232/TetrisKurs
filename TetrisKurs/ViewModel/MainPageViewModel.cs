@@ -19,12 +19,22 @@ namespace TetrisKurs.ViewModel
         public MainPageViewModel()
         { 
             Title = "Tetris";
-            CurrentViewModel = new MenuContentView { BindingContext = new MenuContentViewModel(this)};
+            CurrentViewModel = new MenuContentView(this);
         }
 
-        public void Navigation()
+        public void Start()
         {
-            CurrentViewModel = new ChoiceDifficultyContentView();
+            CurrentViewModel = new ChoiceDifficultyContentView(this);
+        }
+
+        public void Records()
+        {
+            CurrentViewModel = new ScoreContentView(this);
+        }
+
+        public void Back()
+        {
+            CurrentViewModel = new MenuContentView(this);
         }
     }
 }

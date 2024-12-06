@@ -9,7 +9,7 @@
     Shell.FlyoutBehavior="Flyout"
     Title="TetrisKurs">
 
-    <ShellContent Title="Home" ContentTemplate="{DataTemplate local:MainPage}"/>
-    <ShellContent Title="Game" ContentTemplate="{DataTemplate lo:GameTitrisPageView}"/>
+    <ShellContent Route="MainPage" ContentTemplate="{DataTemplate local:MainPage}"/>
+    <ShellContent Route="Game" ContentTemplate="{DataTemplate lo:GameTitrisPageView}"/>
 
 </Shell>

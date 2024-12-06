@@ -4,9 +4,9 @@ namespace TetrisKurs.View;
 
 public partial class ChoiceDifficultyContentView : ContentView
 {
-	public ChoiceDifficultyContentView()
+	public ChoiceDifficultyContentView(MainPageViewModel mainPageViewModel)
 	{
 		InitializeComponent();
-		BindingContext = new ChoiceDifficultyViewModel();
+		BindingContext = new ChoiceDifficultyViewModel(mainPageViewModel);
 	}
 }

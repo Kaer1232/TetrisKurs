@@ -4,7 +4,7 @@
              x:Class="TetrisKurs.View.MenuContentView">
     <VerticalStackLayout>
         <Button Command="{Binding StartBtnCommannd}" Text="ИГРАТЬ"/>
-        <Button Command="{Binding RecordsClickCommand}" Text="РЕКОРДЫ"/>
+        <Button Command="{Binding RecordsBtnCommannd}" Text="РЕКОРДЫ"/>
         <Button Command="{Binding ExitClickCommand}" Text="ВЫХОД"/>
     </VerticalStackLayout>
 </ContentView>
