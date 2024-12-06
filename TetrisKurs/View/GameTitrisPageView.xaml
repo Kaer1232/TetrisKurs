@@ -2,13 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TetrisKurs.View.GameTitrisPageView"
-             xmlns:converters="clr-namespace:TetrisKurs.Base"
              Title="{Binding Title}">
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:VisabilityConverter x:Key="VisibilityConverter"/>
-        </ResourceDictionary>
-    </ContentPage.Resources>
     <VerticalStackLayout>
         <Grid>
             <Grid.GestureRecognizers>
@@ -35,7 +29,7 @@
                 <Label Grid.Row="0" Grid.Column="2" FontSize="28" Text="{Binding TotalRowCount.Value}" />
             </Grid>
             <Grid>
-                <Grid Background="#99000000" IsVisible="{Binding IsOver.Value, Converter={StaticResource VisibilityConverter}}">
+                <Grid Background="#99000000" IsVisible="{Binding IsOver.Value}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />

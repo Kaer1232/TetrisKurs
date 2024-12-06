@@ -17,8 +17,9 @@ public partial class GameTitrisPageView : ContentPage
         this.InitializeComponent();
         This.SetupField(this.field, this.Game.Field.Cells, 30);
         This.SetupField(this.field, this.Game.NextField.Cells, 18);
-        this.Game.Play();
+        ToPlay();
     }
+    private void ToPlay() => Game.Play(_viewModel.Choice);
     private GameViewModel Game
     {
         get { return BindingContext as GameViewModel; }

@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 
-namespace TetrisKurs.Base
+namespace TetrisKurs.Infrastructure
 {
-    class VisabilityConverter: IValueConverter
+    class VisabilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

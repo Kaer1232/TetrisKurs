@@ -6,5 +6,8 @@ namespace TetrisKurs.Base
     {
         [ObservableProperty]
         string title;
+
+        [ObservableProperty]
+        int choice;
     }
 }

@@ -1,12 +1,13 @@
 ﻿using TetrisKurs.Base;
 using TetrisKurs.View;
+using TetrisKurs.ViewModels;
 
 namespace TetrisKurs.ViewModel
 {
     public partial class ChoiceDifficultyViewModel: ViewModelBase
     {
+        GameViewModel game = new GameViewModel();
         private readonly MainPageViewModel _viewModel;
-
         public ChoiceDifficultyViewModel(MainPageViewModel viewModel)
         {
             _viewModel = viewModel;
@@ -16,19 +17,23 @@ namespace TetrisKurs.ViewModel
             BackBtmCommand = new Command(BackMenu);
         }
 
-        private void EasyGame()
-        {
-
-        }
-
-        private async void MiddleGame()
-        {
+        private async void EasyGame()
+        {   Choice = 1;
+            game.Play(Choice);
             await Shell.Current.GoToAsync(nameof(GameTitrisPageView));
         }
 
-        private void HardGame()
+        public async void MiddleGame()
         {
+            game.Play(Choice);
+            await Shell.Current.GoToAsync(nameof(GameTitrisPageView));
+            
+        }
 
+        private async void HardGame()
+        {
+            game.Play(Choice);
+            await Shell.Current.GoToAsync(nameof(GameTitrisPageView));
         }
 
         private void BackMenu()

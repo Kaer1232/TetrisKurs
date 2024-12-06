@@ -29,6 +29,20 @@ namespace TetrisKurs.Model.GameModels
 
         private System.Timers.Timer Timer { get; } = new System.Timers.Timer();
 
+
+        public void Speed(int choice)
+        {
+            int interval;
+            switch (choice)
+            {
+                case 1: interval = 500; break;
+                case 2: interval = 200; break;
+                case 3: interval = 100; break;
+                default: interval = 1000; break;
+            }
+            this.Timer.Interval = interval;
+        }
+
         public Field()
         {
             this.Timer.ElapsedAsObservable()
@@ -37,16 +51,19 @@ namespace TetrisKurs.Model.GameModels
         }
 
 
-        public void Activate(TetriminoKind kind)
+        public void Activate(TetriminoKind kind, int choice)
         {
             this.isActivated.Value = true;
             this.isUpperLimitOvered.Value = false;
             this.Tetrimino.Value = GameModels.Tetrimino.Create(kind);
             this.placedBlocks.Value = Array.Empty<Block>();
-            this.Timer.Interval = 1000;
+            Speed(choice);
             this.Timer.Start();
             this.isActivated.Value = !this.isUpperLimitOvered.Value;
             if (!this.isActivated.Value) this.Timer.Stop();
+
+            System.Diagnostics.Debug.WriteLine("Start Game!");
+            System.Diagnostics.Debug.WriteLine($"IsUpperLimitOvered: {IsUpperLimitOvered.Value}, isActivated: {isActivated.Value}");
         }
 
 
@@ -56,14 +73,11 @@ namespace TetrisKurs.Model.GameModels
                 return;
 
             if (direction == MoveDirection.Down)
-            {   System.Diagnostics.Debug.WriteLine($"Block Row: {Tetrimino.Value.Position.Row}, Column: {Tetrimino.Value.Position.Column}");
+            {
                 Block block;
                 this.Timer.Stop();
                 if (this.Tetrimino.Value.Move(direction, this.CheckCollision))
                     { this.Tetrimino.ForceNotify();
-
-                    if (this.Tetrimino.Value.Blocks.Any(block => block.Position.Row < -3) && this.Tetrimino.Value.Blocks.Any(block => block.Position.Row < -2))
-                        this.GameOver();
                 }
                 else this.FixTetrimino();
                 this.Timer.Start();
@@ -76,10 +90,12 @@ namespace TetrisKurs.Model.GameModels
         }
         private void GameOver()
         {
-            this.isActivated.Value = false;
-            this.isUpperLimitOvered.Value = true;
+            isActivated.Value = false;
+            isUpperLimitOvered.Value = true;
             this.Timer.Stop();
             System.Diagnostics.Debug.WriteLine("Game Over!");
+            System.Diagnostics.Debug.WriteLine($"IsUpperLimitOvered: {IsUpperLimitOvered.Value}, isActivated: {isActivated.Value}");
+
         }
 
 
@@ -119,7 +135,7 @@ namespace TetrisKurs.Model.GameModels
         public void SpeedUp()
         {
             const int min = 15;
-            var interval = this.Timer.Interval / 2;
+            var interval = this.Timer.Interval / 15;
             this.Timer.Interval = Math.Max(interval, min);
         }
         private bool CheckCollision(Block block)
@@ -168,7 +184,6 @@ namespace TetrisKurs.Model.GameModels
                         })
                         .ToArray();
 
-            //--- 削除した行数
             var removedRowCount = rows.Count(x => x.IsFilled);
             return Tuple.Create(removedRowCount, blocks);
         }
